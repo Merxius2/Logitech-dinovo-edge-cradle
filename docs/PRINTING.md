@@ -4,11 +4,12 @@
 
 | STL | Role | Approx. size (mm) |
 |-----|------|-------------------|
-| `dinovo_cradle_base.stl` | Lip, pogo bosses, electronics cavity, USB slot | 158 × 92 × 26 |
-| `dinovo_cradle_back.stl` | Leaned back rest + side guides | 158 × 190 × 40 |
-| `dinovo_cradle_electronics_cover.stl` | Snap-over bay cover | 38 × 30 × 10 |
+| `dinovo_cradle_cradle.stl` | **OEM-style monolith** — tall rear, front lip, slot, fold, pins | 158 × 102 × 145 |
+| `dinovo_cradle_electronics_cover.stl` | Underside bay cover (rear foot) | 38 × 30 × 10 |
 
-All parts fit a **220 × 220 mm** bed when laid flat.
+`dinovo_cradle_base.stl` / `dinovo_cradle_back.stl` are copies of the monolith for old slicer presets.
+
+Lay the **cradle on its back** (rear wall on the bed) or **feet-down** if your slicer handles the rear overhang; add supports inside the keyboard slot on first print.
 
 ## Settings (starting point)
 

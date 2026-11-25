@@ -1,6 +1,6 @@
 # Logitech diNovo Edge — 3D-printable USB-C charging cradle
 
-Open-source mechanical design for a replacement charging stand with **spring pogo pins** aligned to the keyboard’s dock contacts, a **USB-C** access slot, and a cavity for a **TP4056-class** charging board (with documented power architecture).
+Open-source mechanical design for a replacement charging stand shaped like the **factory Logitech dock** (tall rear wall, short front lip, centre slot/fold), with **spring pogo pins**, **USB-C** access, and a **TP4056-class** bay (with documented power architecture).
 
 ## What you get
 
@@ -15,7 +15,7 @@ Open-source mechanical design for a replacement charging stand with **spring pog
 
 ## Design overview
 
-The OEM stand is only about **6 in / 158 mm** wide; the keyboard rests on a **bottom-center cutout** (~102 × 38 mm) while leaning on a clear back rest. **Weight must hang on the cutout lip + front hook**, not on friction against the back — the tab fills ~37 mm of the recess so it does not slide along the lean. This replica follows that layout so it prints on typical beds without splitting the full **409 mm** keyboard width.
+The model is a **single sculpted monolith** (~158 mm wide): a **narrow slot** between the front lip and tall rear wall holds the keyboard’s 12 mm edge; the **centre fold** engages the underside cutout (~102 × 38 mm) with hook retention and pogo pins. The rear **foot overhang** matches the OEM base and hides the USB-C / TP4056 cavity underneath.
 
 ```mermaid
 flowchart TB
@@ -52,9 +52,9 @@ flowchart TB
 
 Pass `-D 'PART="..."'` when exporting:
 
-- `base` — main dock with pins and cavity  
-- `back` — rear support  
-- `electronics_cover` — bay lid  
+- `cradle` — full OEM-style body (pins + slot + electronics)  
+- `electronics_cover` — underside bay lid  
+- `base` / `back` — alias `cradle` (legacy)  
 - `assembly` — full preview with ghost keyboard (default)
 
 ## License
