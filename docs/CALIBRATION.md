@@ -1,37 +1,19 @@
-# Calibrating pogo pin alignment
+# Calibration
 
-Published specs do not include contact pitch. **Measure your keyboard** before the final print.
+Logitech does not publish the contact pitch. Measure your keyboard, then edit `openscad/dinovo_cradle.scad` and run `./scripts/export-stl.sh`.
 
-## Tools
+| Variable | What to measure |
+|----------|-----------------|
+| `CONTACT_SPACING` | Centre-to-centre of the two pads. Default 18 mm. |
+| `KB_THICK` | Thickness of the edge that sits in the slot. Default 12 mm. Use 19.5 if you measure the thicker body. |
+| `CUTOUT_W` | Width of the bottom-centre recess. Default 101.6 mm (4 in). |
+| `LEAN` | How far the keyboard leans back from vertical. Default 12°. |
+| `BOARD_L`, `BOARD_W` | Your TP4056 outline. Default 38 × 22 mm. |
+| `HOLE_INSET_L`, `HOLE_INSET_W` | Distance from each PCB edge to the mounting-hole centres. Default 3 mm. |
+| `USB_HOLE_W`, `USB_HOLE_H` | Rear opening. Default 13.5 × 7.4 mm. |
+| `USB_Z_ABOVE` | Receptacle centre above the bottom of the PCB. Default 3.4 mm. |
+| `PIN_SLOT_W` | Slot width for a 1.5 mm sleeve. Default 2.05 mm. |
+| `PIN_SLOT_L` | Slot length, so the pin can slide onto the pad. Default 8 mm. |
+| `PIN_LEN` / `PIN_TIP` | Pin length and how far the tip stands above the pad. Defaults 16 mm and 2.6 mm. |
 
-- Digital calipers
-- Masking tape on contacts (optional, to see witness marks)
-- Original dock (if available) for reference
-
-## Steps
-
-1. **Cutout** — Measure the width and depth of the bottom-center underside recess. Defaults in OpenSCAD: 101.6 × 38.1 mm (`CUTOUT_W`, `CUTOUT_D`). Tune `LIP_WIDTH_CLEAR` and `LIP_DEPTH_CLEAR` (not a loose +1.2 mm gap) so the tab fills the pocket without binding.
-
-2. **Retention** — The keyboard must **hang on the cutout hook**, not rely on friction on the back panel. If it can slide along the lean direction, increase `LIP_DEPTH` (via smaller `LIP_DEPTH_CLEAR`) and confirm `HOOK_H` catches the front shelf of the cutout. For first fit tests set `HOOK_INSET = 0`, then enable the hook.
-
-3. **Contact spacing** — Measure center-to-center between the two copper pads on the **vertical step** of the rear ramp. Edit `CONTACT_SPACING` in `openscad/dinovo_cradle.scad`.
-
-4. **Contact height** — With the keyboard resting as in the OEM stand (or balanced on blocks at the same lean), measure from the **top of the ramp step** (the horizontal shelf under the contacts) up to the center of each pad. Edit `CONTACT_HEIGHT`.
-
-5. **Pin protrusion** — Start with `CONTACT_INSET = 2.0` mm. After a test print, pins should protrude ~1.5–2.5 mm beyond the printed face and compress slightly when the keyboard is fully seated in the lip.
-
-6. **Dry fit** — Print only `PART="base"` first. Slide the keyboard into the lip cutout without power. Contacts should line up visually; use carbon paper or a felt marker on pads to mark witness dots on the pins.
-
-7. **OpenSCAD preview** — Open `dinovo_cradle.scad`, set `PART = "assembly"`, and use the ghost keyboard (`%` module) to check lean and lip engagement.
-
-## Parameter cheat sheet
-
-| Variable | Meaning |
-|----------|---------|
-| `CONTACT_SPACING` | Horizontal distance between pogo pin centers |
-| `CONTACT_HEIGHT` | Vertical offset of pin centers on lip face |
-| `CONTACT_INSET` | How far pins extend toward keyboard |
-| `LIP_WIDTH` / `LIP_DEPTH` | Mechanical fit in underside cutout |
-| `LEAN_ANGLE` | Back panel tilt — match OEM feel (~10–15°) |
-
-Community reference values (unverified — use as starting point only): spacing ~18–20 mm, contact centers a few mm above the step lip.
+Dry-fit the cradle with no power. The centre pad should enter the recess, the lip should stop the keyboard sliding out, and the pin holes should land on the pads. A felt marker on the pads leaves a witness mark if you need to shift `CONTACT_SPACING`.

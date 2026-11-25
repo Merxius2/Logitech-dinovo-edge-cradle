@@ -1,42 +1,22 @@
-# 3D printing notes
+# Printing
 
-## What to print
+## Parts
 
-### Split build (recommended on tight beds)
+| STL | Qty | Approx. size |
+|-----|-----|----------------|
+| `stl/dinovo_cradle.stl` | 1 | 135 × 87 × 85.5 mm |
+| `stl/dinovo_cradle_cover.stl` | 1 | bay lid, bosses facing up |
 
-| # | STL | Qty | Max bbox (mm) | Bed note |
-|---|-----|-----|---------------|----------|
-| 1 | `dinovo_cradle_side_left.stl` | 1 | ~22 × 102 × 145 | Small — any bed |
-| 2 | `dinovo_cradle_side_right.stl` | 1 | ~22 × 102 × 145 | Mirror of left |
-| 3 | `dinovo_cradle_center.stl` | 1 | ~118 × 102 × 145 | Fits 220 × 220 |
-| 4 | `dinovo_cradle_electronics_cover.stl` | 1 | ~38 × 30 × 6 | Optional |
+The stand fits a 150 mm bed. Print the cradle with the **foot on the bed** and the fins upward. Print the cover **flat**, bosses up.
 
-Assembly: [ASSEMBLY.md](ASSEMBLY.md).
+## Settings
 
-### One-piece build
+- PETG or ABS for the cradle. PLA is fine for a fit check.
+- 0.2 mm layers, 4 perimeters, 25–30 % infill.
+- Brim on the cradle.
+- The USB-C opening is a horizontal rounded slot. If the ceiling sags, paint a small support inside that hole only.
+- The bay is open toward the bed, so it needs no support.
 
-| STL | Qty |
-|-----|-----|
-| `dinovo_cradle_cradle.stl` | 1 (full monolith) |
+## After printing
 
-`dinovo_cradle_base.stl` / `dinovo_cradle_back.stl` duplicate `cradle.stl` — do not print extras.
-
-## Orientation
-
-| Part | On bed |
-|------|--------|
-| **Sides** | Largest flat face down (inner seam facing up) |
-| **Center** | **Rear wall down** or foot down; supports in slot if needed |
-| **Cover** | Flat |
-
-## Settings (starting point)
-
-- Material: PETG or ABS on center/sides; PLA OK for prototypes
-- Layer height: 0.2 mm, 4 perimeters, 25–35 % gyroid
-- Brim on **center** (and on full cradle)
-
-## Post-processing
-
-1. Ream pogo pin holes with 1.75 mm drill if needed.
-2. Lightly sand peg faces on center if sides are hard to press on.
-3. Clear USB slot burrs after printing center/cradle.
+The pogo slots should accept a 1.5 mm sleeve. If a pin will not enter, open the slot with a needle file rather than drilling it round. Clear the USB-C opening so a plug seats fully. The four boss holes are 1.75 mm for an M2 self-tapping screw; do not drill them out to clearance size.
