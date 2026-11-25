@@ -26,8 +26,17 @@ Lay the **cradle on its back** (rear wall on the bed) or **feet-down** if your s
 2. Run a **1.75 mm drill** by hand through pogo pin holes if needed.
 3. Counter-sink M3 holes in back panel foot by hand if using screws.
 
-## Assembly to print
+## What to print (unique parts: **2**)
 
-1. Print **base** only → calibrate pins ([CALIBRATION.md](CALIBRATION.md)).
-2. Print **back** and attach to base with epoxy or M3 screws through the foot block.
-3. Print **cover** after electronics fit check.
+| # | File | Qty | Notes |
+|---|------|-----|--------|
+| 1 | `stl/dinovo_cradle_cradle.stl` | **1×** | Full stand — only mandatory print |
+| 2 | `stl/dinovo_cradle_electronics_cover.stl` | **1×** | Optional lid over TP4056 bay under rear foot |
+
+Do **not** print `dinovo_cradle_base.stl` and `dinovo_cradle_back.stl` **in addition** to `cradle.stl` — they are identical copies of the monolith for older filenames.
+
+## Suggested print order
+
+1. Print **cradle** → dry-fit keyboard ([CALIBRATION.md](CALIBRATION.md)).
+2. Install pogo pins + electronics; verify fit.
+3. Print **electronics_cover** if the bay needs a lid.
