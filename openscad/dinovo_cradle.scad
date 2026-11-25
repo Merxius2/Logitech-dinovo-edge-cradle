@@ -160,19 +160,15 @@ module electronics_cover() {
 }
 
 module ghost_keyboard() {
-  // Flat keyboard: width × depth × thickness (X × Y × Z), then stand upright and lean back.
-  tilt = 90 - LEAN_ANGLE;
+  // Upright dock pose: width X, thin Y, height Z; lean top toward back (−Y).
   lip_top_z = BASE_FOOT_H + ELECTRONICS_H + LIP_STEP_H;
   lip_y = BASE_DEPTH / 2 - LIP_DEPTH / 2 + 2;
-  // Vertical half-extent after tipping (corner of depth + thickness axes).
-  kb_half_up = KB_DEPTH / 2 * sin(tilt) + KB_THICKNESS / 2 * cos(tilt);
-  kb_half_fwd = KB_DEPTH / 2 * cos(tilt) - KB_THICKNESS / 2 * sin(tilt);
-  y_center = lip_y - kb_half_fwd * 0.55;
-  z_center = lip_top_z + kb_half_up;
+  z_center = lip_top_z + KB_DEPTH / 2 * cos(LEAN_ANGLE) + KB_THICKNESS / 2 * sin(LEAN_ANGLE);
+  y_center = lip_y - KB_DEPTH / 2 * sin(LEAN_ANGLE) * 0.45;
 
   %translate([0, y_center, z_center])
-    rotate([tilt, 0, 0])
-      cube([KB_WIDTH, KB_DEPTH, KB_THICKNESS], center = true);
+    rotate([-LEAN_ANGLE, 0, 0])
+      cube([KB_WIDTH, KB_THICKNESS, KB_DEPTH], center = true);
 }
 
 module assembly() {
