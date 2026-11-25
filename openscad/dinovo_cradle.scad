@@ -183,7 +183,7 @@ module center_joint_pegs(dir) {
   face_x = dir < 0 ? X_CENTER_LEFT : X_CENTER_RIGHT;
   for (zz = JOINT_Z)
     translate([face_x, 2, zz])
-      rotate([0, -90 * dir, 0])
+      rotate([0, 90 * dir, 0])
         cylinder(d = JOINT_PEG_D, h = JOINT_OVERLAP + 0.4, center = false);
 }
 
