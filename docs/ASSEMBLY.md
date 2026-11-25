@@ -1,42 +1,11 @@
-# Split-print assembly
+# Assembly
 
-## Parts (recommended print set)
+1. Measure the keyboard contacts and regenerate the STL if `CONTACT_SPACING` changed. See [CALIBRATION.md](CALIBRATION.md).
+2. Solder wires to the pogo tails, then press the pins into the two holes on the centre pad. The sleeves sit in the top 8 mm; the tails drop into the bay.
+3. Place the TP4056 on the cover bosses, USB-C toward the rear edge of the cover (the edge that will face the back of the stand). Screw it down with four M2 × 6 mm screws.
+4. Drop the cover into the recess in the foot. The receptacle should line up with the rear opening. Fasten the cover with four M2 × 8 mm screws into the side rims.
+5. A USB-C plug should pass through the rear hole and seat in the receptacle. If it stops short, increase `USB_PROTRUDE` or `USB_HOLE_W` slightly and reprint, or file the opening.
+6. Wire per [ELECTRONICS.md](ELECTRONICS.md). Confirm voltage and polarity at the pins before the keyboard goes in.
+7. Set the keyboard into the slot so the bottom cutout drops over the centre pad and the lip stops it sliding forward. It leans back against the tall fin.
 
-| STL | Qty | Role |
-|-----|-----|------|
-| `dinovo_cradle_side_left.stl` | 1 | Left outer cheek / side wall |
-| `dinovo_cradle_side_right.stl` | 1 | Right side (mirror) |
-| `dinovo_cradle_center.stl` | 1 | Rear wall, front lip, slot floor, **fold + pogo bosses**, joint pegs |
-| `dinovo_cradle_electronics_cover.stl` | 1 | Optional underside bay lid |
-
-**`dinovo_cradle_cradle.stl`** is the same geometry **pre-joined** — one piece if you prefer a single print.
-
-## How the split works
-
-```
-        [ side_left ]  | [      center      ]  | [ side_right ]
-              22 mm    |   ~118 mm           |     22 mm     
-```
-
-- **`SIDE_PART_W`** (22 mm): each side STL from the outer edge inward.
-- **`JOINT_OVERLAP`** (4 mm): mating flanges with **3× pegs** at Z ≈ 32 / 72 / 112 mm.
-- Pins are on **center**; pockets in **sides**.
-
-## Assembly steps
-
-1. Solder pogo pins into **center** before glue-up (easier access).
-2. Install TP4056 / wiring in the center cavity; route wires through the channel toward the fold.
-3. Dry-fit: slide sides onto center pegs; check keyboard fit.
-4. Apply epoxy or gel CA on the mating faces **and** pegs; clamp 15–30 min (or use M3 screws through printed pilot holes if you add them).
-5. Optional: snap on `electronics_cover`.
-
-## Alternative: one-piece print
-
-Use only `dinovo_cradle_cradle.stl` when bed size and supports are acceptable (~158 mm wide).
-
-## Tuning
-
-Edit in `openscad/dinovo_cradle.scad`:
-
-- `SIDE_PART_W` — wider sides if you want smaller center or more OEM “wing” material on sides.
-- `JOINT_PEG_D` / `JOINT_HOLE_D` — if pegs are too tight, increase hole diameter by 0.2 mm.
+![Cover bosses](preview/cover.png)

@@ -1,30 +1,26 @@
-# Model orientation (for previews and OpenSCAD)
+# Orientation
 
-When the cradle sits on a desk ready to receive the keyboard:
+The stand sits on the foot. In OpenSCAD:
 
-| Direction | OpenSCAD axis | What you see |
-|-----------|---------------|--------------|
-| **Front** | +Y | Short lip, slot opening, prow (OEM “logitech” face) |
-| **Back** | −Y | Tall rear wall + foot overhang; USB cavity is under here |
-| **Width** | X | ~158 mm left–right (stand width) |
-| **Up** | +Z | Keyboard stands upright in the slot |
+| Axis | Meaning |
+|------|---------|
+| +X | Right |
+| +Y | Front, the shorter fin |
+| −Y | Rear, the tall fin and the USB-C hole |
+| +Z | Up |
 
-The factory product photo is roughly a **front-right isometric** (camera from +X, +Y, +Z).
-
-OpenSCAD PNG example matching that photo:
+The factory photo is a front three-quarter view: short fin toward the camera, tall fin behind, slot between them.
 
 ```bash
-openscad -D 'PART="cradle"' --imgsize=1200,900 \
-  --camera=0,-0.72,0.52,62,0,25,750 \
-  -o front.png openscad/dinovo_cradle.scad
+# Side, rear fin on the left
+openscad -D 'PART="cradle"' --imgsize=1100,800 \
+  --camera=420,0,42,0,0,40 \
+  -o side.png openscad/dinovo_cradle.scad
+
+# Rear face, USB-C hole
+openscad -D 'PART="cradle"' --imgsize=900,700 \
+  --camera=0,-120,12,0,-43,11 \
+  -o port.png openscad/dinovo_cradle.scad
 ```
 
-**Back view** (tall slab, foot trailing away):
-
-```bash
-openscad -D 'PART="cradle"' --imgsize=1200,900 \
-  --camera=0,0.75,0.48,62,0,205,750 \
-  -o back.png openscad/dinovo_cradle.scad
-```
-
-The fold and pogo pins sit **inside the slot floor** near +Y; they are visible in a low front or isometric view, not on the flat exterior of the rear wall.
+`PART="assembly"` adds a translucent keyboard leaned back in the slot.

@@ -1,261 +1,291 @@
-// Logitech diNovo Edge — OEM-style 3D-printable charging cradle
-// Printable as monolith OR split: side_left + side_right + center (+ cover)
-// Export: ./scripts/export-stl.sh
+// Logitech diNovo Edge charging cradle
+// Outer size matches the factory stand: 135 x 87 x 85.5 mm (W x D x H).
+// Two fins, centre slot, pogo pins, TP4056 mounting holes, rear USB-C opening.
+//
+//   openscad -D 'PART="cradle"' -o stl/dinovo_cradle.stl openscad/dinovo_cradle.scad
+//   ./scripts/export-stl.sh
 
 PART = "assembly";
-// assembly | cradle | center | side_left | side_right | electronics_cover | base | back
+// assembly | cradle | cover | exploded
 
-/* --- Keyboard reference --- */
-KB_WIDTH         = 409;
-KB_DEPTH         = 211;
-KB_THICKNESS     = 12;
-CUTOUT_W         = 101.6;
-CUTOUT_D         = 38.1;
+/* --- Factory envelope (Logicool / PC Watch, 2007) --- */
+WIDTH        = 135;    // X, left-right
+DEPTH        = 87;     // Y, rear (-) to front (+)
+HEIGHT       = 85.5;   // Z, rear crest
+FRONT_H      = 62;     // front fin crest
+FOOT_H       = 18;
+EDGE_R       = 2.8;    // outer edge radius; keep below half the throat width
+LEAN         = 12;     // keyboard lean back from vertical, degrees
 
-/* --- OEM outer proportions --- */
-OEM_WIDTH        = 158;
-OEM_BASE_D       = 88;
-OEM_REAR_EXT     = 14;
-OEM_FOOT_H       = 11;
-OEM_REAR_H       = 132;
-OEM_FRONT_H      = 44;
-OEM_WALL_TH      = 8;
-OEM_SHELL_TH     = 6;
-OEM_FILLET       = 3.5;
-LEAN_ANGLE       = 9;
-SLOT_CLEAR_Y     = 1.4;
+/* --- Keyboard --- */
+KB_WIDTH     = 409;
+KB_DEPTH     = 211;    // up the keys, once stood in the slot
+KB_THICK     = 12;     // official edge thickness; set 19.5 if you measure the thick body
+CUTOUT_W     = 101.6;  // bottom-centre recess, 4 in
+CUTOUT_CLEAR = 3.0;    // total width clearance of the centre pad in that recess
 
-/* --- Split-print joints (sides + center) --- */
-SIDE_PART_W      = 22;           // mm from each outer edge (side STLs)
-JOINT_OVERLAP    = 4;            // glue/peg overlap at seam
-JOINT_Z          = [32, 72, 112]; // peg/heights along stand
-JOINT_PEG_D      = 2.9;
-JOINT_HOLE_D     = 3.4;
-X_LEFT_OUTER     = -OEM_WIDTH / 2;
-X_RIGHT_OUTER    = OEM_WIDTH / 2;
-X_LEFT_INNER     = X_LEFT_OUTER + SIDE_PART_W;
-X_RIGHT_INNER    = X_RIGHT_OUTER - SIDE_PART_W;
-X_CENTER_LEFT    = X_LEFT_INNER - JOINT_OVERLAP;
-X_CENTER_RIGHT   = X_RIGHT_INNER + JOINT_OVERLAP;
+/* --- Pogo pins (measure before the final print) --- */
+CONTACT_SPACING = 18.0;  // centre to centre, left-right
+PIN_HOLE_D      = 1.80;  // press fit for a 1.5 mm pogo sleeve
+PIN_PRESS_DEPTH = 8;
+PIN_RELIEF_D    = 3.6;   // wire / solder tail below the sleeve
 
-/* --- Cutout / fold --- */
-LIP_WIDTH_CLEAR  = 0.5;
-LIP_DEPTH_CLEAR  = 0.8;
-LIP_WIDTH        = CUTOUT_W - LIP_WIDTH_CLEAR;
-LIP_DEPTH        = CUTOUT_D - LIP_DEPTH_CLEAR;
-FOLD_STEP_H      = 9.5;
-HOOK_H           = 3.0;
-HOOK_INSET       = 1.0;
-
-/* --- Pogo pins --- */
-PIN_COUNT        = 2;
-PIN_DIAM         = 1.75;
-PIN_HOLE_D       = PIN_DIAM + 0.35;
-PIN_BOSS_OD      = 7;
-PIN_BOSS_H       = 8;
-CONTACT_SPACING  = 19.0;
-CONTACT_HEIGHT   = 6.5;
-CONTACT_INSET    = 2.0;
-
-/* --- TP4056 bay --- */
-TP4056_L         = 30;
-TP4056_W         = 22;
-TP4056_H         = 12;
-USB_PORT_SLOT_W  = 11.5;
-USB_PORT_SLOT_H  = 4.5;
-ELEC_Y           = -OEM_BASE_D / 2 - OEM_REAR_EXT / 2 + 6;
+/* --- TP4056 USB-C module with four mounting holes ---
+   Defaults match the common 38 x 22 mm protected module
+   (four M2 holes, ~3 mm in from each edge, USB-C on a short edge).
+   Measure your board and edit these if it differs. The small
+   hole-less 29 x 17 mm module also sits in the same nest: push its
+   USB-C end against the rear stop and leave the screws out. */
+BOARD_L        = 38.0;   // depth, USB-C on the rear short edge
+BOARD_W        = 22.0;   // left-right
+BOARD_T        = 1.6;
+HOLE_INSET_L   = 3.0;    // hole centre to the short (USB / far) edges
+HOLE_INSET_W   = 3.0;    // hole centre to the long edges
+MOUNT_HOLE_D   = 1.75;   // M2 self-tap into the printed boss
+MOUNT_BOSS_D   = 6.4;
+MOUNT_BOSS_H   = 5.0;
+USB_PROTRUDE   = 2.0;    // how far the receptacle sticks past the PCB
+USB_HOLE_W     = 13.5;   // opening the cable plug passes through
+USB_HOLE_H     = 7.4;
+USB_Z_ABOVE    = 3.4;    // receptacle centre above the PCB bottom face
+POCKET_SIDE    = 4.0;    // extra pocket width each side of the board
+POCKET_FRONT   = 18.0;   // empty length in front of the board (wires)
+POCKET_CEILING = 15.2;   // top of the bay inside the foot
+COVER_T        = 2.2;
+COVER_SCREW_D  = 1.75;   // M2 self-tap, cover to foot
+COVER_CLEAR_D  = 2.5;
 
 $fn = 48;
 
-module rounded_prism(sz, r) {
+Y_REAR = -DEPTH / 2;
+Y_FRONT = DEPTH / 2;
+
+// Rear wall the USB-C receptacle tunnels through. The board stops against
+// the inside of this wall; the receptacle crosses it to the outer face.
+REAR_WALL = 3.2;
+BOARD_REAR_Y = Y_REAR + REAR_WALL + 0.4;
+BOARD_FRONT_Y = BOARD_REAR_Y + BOARD_L;
+BOARD_CY = (BOARD_REAR_Y + BOARD_FRONT_Y) / 2;
+HOLE_YS = [BOARD_REAR_Y + HOLE_INSET_L, BOARD_FRONT_Y - HOLE_INSET_L];
+HOLE_XS = [-(BOARD_W / 2 - HOLE_INSET_W), BOARD_W / 2 - HOLE_INSET_W];
+
+POCKET_X = BOARD_W / 2 + POCKET_SIDE;
+POCKET_Y0 = Y_REAR + REAR_WALL;
+POCKET_Y1 = BOARD_FRONT_Y + POCKET_FRONT;
+SEAT_Z = 23.5;
+PIN_Y = -1.0;
+
+// Profile points are [depth Y, height Z]. polygon_2d swaps them so a
+// rotate([0, -90, 0]) extrusion comes out standing up, width along X.
+module profile_2d() {
+  pts = [
+    [Y_REAR, 0],
+    [Y_FRONT, 0],
+    [Y_FRONT, 12],
+    [38, 16],
+    [35, 30],
+    [39, 48],
+    [42, 58],
+    [38, FRONT_H],
+    [27, FRONT_H],
+    [21, 50],
+    [14, 34],
+    [8, 22],
+    [3, 17.4],
+    [-9, 17.4],
+    [-14, 24],
+    [-17, 42],
+    [-19, 70],
+    [-23, HEIGHT],
+    [-36, HEIGHT],
+    [-39.5, 70],
+    [-42.4, 34],
+    [Y_REAR, 14]
+  ];
+  polygon([for (p = pts) [p[1], p[0]]]);
+}
+
+module rounded_shell() {
   minkowski() {
-    cube([sz[0] - 2 * r, sz[1] - 2 * r, sz[2] - 2 * r], center = true);
-    sphere(r = r, $fn = 24);
+    rotate([0, -90, 0])
+      linear_extrude(WIDTH - 2 * EDGE_R, center = true, convexity = 8)
+        offset(r = -EDGE_R, $fn = 16)
+          profile_2d();
+    sphere(r = EDGE_R, $fn = 20);
   }
 }
 
-module clip_x(x0, x1) {
-  intersection() {
-    children();
-    translate([(x0 + x1) / 2, -6, 78])
-      cube([x1 - x0 + 0.01, 230, 210], center = true);
+module flat_bottom() {
+  translate([0, 0, -40])
+    cube([WIDTH + 40, DEPTH + 40, 40], center = true);
+}
+
+module pocket_void() {
+  hull() {
+    translate([-POCKET_X + 3, POCKET_Y0 + 3, -1])
+      cylinder(d = 6, h = POCKET_CEILING + 1);
+    translate([POCKET_X - 3, POCKET_Y0 + 3, -1])
+      cylinder(d = 6, h = POCKET_CEILING + 1);
+    translate([-POCKET_X + 3, POCKET_Y1 - 3, -1])
+      cylinder(d = 6, h = POCKET_CEILING + 1);
+    translate([POCKET_X - 3, POCKET_Y1 - 3, -1])
+      cylinder(d = 6, h = POCKET_CEILING + 1);
   }
 }
 
-module pin_boss(ix) {
-  x = (ix == 0 ? -1 : 1) * CONTACT_SPACING / 2;
-  translate([x, 0, CONTACT_HEIGHT])
-    difference() {
-      cylinder(h = PIN_BOSS_H, d = PIN_BOSS_OD, center = false);
-      translate([0, 0, -0.5])
-        cylinder(h = PIN_BOSS_H + 2, d = PIN_HOLE_D, center = false);
+// Step the cover sits in, so the underside stays flush.
+module cover_rabbet() {
+  // Shelf for the lid. Kept inside the outer shell so the rear wall stays closed.
+  translate([-POCKET_X - 0.8, POCKET_Y0 - 0.25, -0.2])
+    cube([
+      2 * POCKET_X + 1.6,
+      (POCKET_Y1 - POCKET_Y0) + 1.15,
+      COVER_T + 0.45
+    ]);
+}
+
+module usb_hole() {
+  // Rounded slot the USB-C plug passes through. Centred on the receptacle.
+  span = REAR_WALL + 14;
+  mid_y = Y_REAR + 1.2;
+  hw = max(USB_HOLE_W / 2 - USB_HOLE_H / 2, 0.2);
+  hull() {
+    for (x = [-hw, hw])
+      translate([x, mid_y, SEAT_USB_Z()])
+        rotate([90, 0, 0])
+          cylinder(d = USB_HOLE_H, h = span, center = true, $fn = 40);
+  }
+}
+
+function SEAT_USB_Z() = COVER_T + MOUNT_BOSS_H + USB_Z_ABOVE;
+
+module mounting_bosses() {
+  for (x = HOLE_XS, y = HOLE_YS)
+    translate([x, y, COVER_T])
+      cylinder(d = MOUNT_BOSS_D, h = MOUNT_BOSS_H);
+}
+
+module mounting_holes() {
+  for (x = HOLE_XS, y = HOLE_YS)
+    translate([x, y, COVER_T - 0.05])
+      cylinder(d = MOUNT_HOLE_D, h = MOUNT_BOSS_H + 0.2);
+}
+
+module cover_screw_positions() {
+  // Two along each side rim, clear of the bay and the outer shell.
+  for (x = [-1, 1], y = [POCKET_Y0 + 8, POCKET_Y1 - 8])
+    translate([x * (POCKET_X + 6.5), y, 0])
+      children();
+}
+
+module cover_screw_pilots() {
+  cover_screw_positions()
+    translate([0, 0, -0.2])
+      cylinder(d = COVER_SCREW_D, h = 10);
+}
+
+module contact_pad() {
+  pad_w = CUTOUT_W - CUTOUT_CLEAR;
+  // Buried into the valley floor so it fuses with the shell.
+  translate([-pad_w / 2, -9, 14.2])
+    cube([pad_w, 16, SEAT_Z - 14.2]);
+  // Lip the keyboard recess hooks behind, so it cannot slide forward.
+  translate([-pad_w / 2, 5.6, SEAT_Z - 1.6])
+    cube([pad_w, 3.2, 4.4]);
+}
+
+module pin_holes() {
+  for (x = [-CONTACT_SPACING / 2, CONTACT_SPACING / 2]) {
+    translate([x, PIN_Y, SEAT_Z - PIN_PRESS_DEPTH])
+      cylinder(d = PIN_HOLE_D, h = PIN_PRESS_DEPTH + 8);
+    translate([x, PIN_Y, COVER_T + 1])
+      cylinder(d = PIN_RELIEF_D, h = SEAT_Z - PIN_PRESS_DEPTH - COVER_T);
+  }
+}
+
+module foot_dimples() {
+  for (x = [-1, 1], y = [-1, 1])
+    translate([x * (WIDTH / 2 - 12), y * (DEPTH / 2 - 10), -0.2])
+      cylinder(d = 8, h = 1.3);
+}
+
+module cradle_solid() {
+  difference() {
+    union() {
+      difference() {
+        rounded_shell();
+        flat_bottom();
+        pocket_void();
+        cover_rabbet();
+        usb_hole();
+        foot_dimples();
+      }
+      contact_pad();
     }
-}
-
-module contact_fold(y0, z0) {
-  translate([0, y0, z0]) {
-    rounded_prism([LIP_WIDTH, LIP_DEPTH, FOLD_STEP_H], 1.2);
-    if (HOOK_INSET > 0)
-      translate([0, -LIP_DEPTH / 2 + HOOK_INSET, FOLD_STEP_H / 2])
-        rounded_prism([LIP_WIDTH - 2, LIP_WIDTH * 0.22, HOOK_H], 0.6);
-    for (i = [0 : PIN_COUNT - 1])
-      translate([0, -LIP_DEPTH / 2 + CONTACT_INSET, 0])
-        pin_boss(i);
+    pin_holes();
+    cover_screw_pilots();
   }
 }
 
-module electronics_cavity() {
-  translate([0, ELEC_Y, OEM_FOOT_H / 2 - 2])
-    cube([TP4056_L + 4, TP4056_W + 4, TP4056_H + 4], center = true);
-}
-
-module usb_c_slot() {
-  translate([OEM_WIDTH / 2 - 6, ELEC_Y - TP4056_W / 2 - 2, OEM_FOOT_H / 2])
-    rotate([0, 90, 0])
-      cube([USB_PORT_SLOT_H, USB_PORT_SLOT_W, OEM_SHELL_TH + 6], center = true);
-}
-
-module wire_channel(z0) {
-  translate([0, ELEC_Y + 10, (OEM_FOOT_H + z0) / 2])
-    cube([5, 28, 22], center = true);
-}
-
-module oem_profile_2d() {
-  x_rear = -OEM_BASE_D / 2 - OEM_REAR_EXT;
-  x_front = OEM_BASE_D / 2 + 6;
-  x_slot_front = OEM_BASE_D / 2 - 16;
-  z0 = OEM_FOOT_H;
-
-  polygon(points = [
-    [x_rear, z0],
-    [x_front, z0],
-    [x_front - 4, z0 + OEM_FRONT_H + 6],
-    [x_slot_front, z0 + OEM_FRONT_H - 2],
-    [x_slot_front - 10, z0 + OEM_FRONT_H + 12],
-    [-OEM_BASE_D / 2 + 2, z0 + OEM_REAR_H],
-    [-OEM_BASE_D / 2 - OEM_REAR_EXT + 8, z0 + 5],
-    [x_rear + 5, z0]
-  ]);
-}
-
-module oem_outer_solid() {
-  minkowski() {
-    rotate([0, 90, 0])
-      linear_extrude(OEM_WIDTH - 2 * OEM_FILLET, center = true)
-        oem_profile_2d();
-    sphere(r = OEM_FILLET, $fn = 24);
-  }
-}
-
-module keyboard_slot_cut() {
-  slot_y = KB_THICKNESS + 2 * SLOT_CLEAR_Y;
-  slot_top = OEM_FOOT_H + OEM_REAR_H + 25;
-  pivot_y = -OEM_BASE_D / 2 + 10;
-
-  translate([0, pivot_y, OEM_FOOT_H + OEM_REAR_H / 2])
-    rotate([-LEAN_ANGLE, 0, 0])
-      cube([OEM_WIDTH - 2 * OEM_SHELL_TH + 4, slot_y + 0.5, slot_top], center = true);
-}
-
-FOLD_Y = OEM_BASE_D / 2 - LIP_DEPTH / 2 - 10;
-FOLD_Z = OEM_FOOT_H;
-
-module cradle_solid_shell() {
+module cover_plate() {
   difference() {
-    oem_outer_solid();
-    keyboard_slot_cut();
-    electronics_cavity();
-    usb_c_slot();
-    wire_channel(FOLD_Z + FOLD_STEP_H);
-  }
-}
-
-// Dowel pockets on inner face of each side part
-module side_joint_holes(face_x) {
-  for (zz = JOINT_Z)
-    translate([face_x, 2, zz])
-      rotate([0, 90, 0])
-        cylinder(d = JOINT_HOLE_D, h = JOINT_OVERLAP + 6, center = true);
-}
-
-// Pegs on center part, protruding toward sides
-module center_joint_pegs(dir) {
-  face_x = dir < 0 ? X_CENTER_LEFT : X_CENTER_RIGHT;
-  for (zz = JOINT_Z)
-    translate([face_x, 2, zz])
-      rotate([0, 90 * dir, 0])
-        cylinder(d = JOINT_PEG_D, h = JOINT_OVERLAP + 0.4, center = false);
-}
-
-module part_side_left() {
-  difference() {
-    clip_x(X_LEFT_OUTER - 1, X_LEFT_INNER) cradle_solid_shell();
-    side_joint_holes(X_LEFT_INNER - JOINT_OVERLAP / 2);
-  }
-}
-
-module part_side_right() {
-  difference() {
-    clip_x(X_RIGHT_INNER, X_RIGHT_OUTER + 1) cradle_solid_shell();
-    side_joint_holes(X_RIGHT_INNER + JOINT_OVERLAP / 2);
-  }
-}
-
-module part_center() {
-  union() {
-    clip_x(X_CENTER_LEFT, X_CENTER_RIGHT) cradle_solid_shell();
-    contact_fold(FOLD_Y, FOLD_Z);
-    center_joint_pegs(-1);
-    center_joint_pegs(1);
-  }
-}
-
-module cradle_body() {
-  union() {
-    part_side_left();
-    part_side_right();
-    part_center();
-  }
-}
-
-module electronics_cover() {
-  difference() {
-    translate([0, ELEC_Y, 3])
-      rounded_prism([TP4056_L + 8, TP4056_W + 8, 6], 1.2);
-    translate([0, ELEC_Y, 4])
-      cube([TP4056_L + 2, TP4056_W + 2, 8], center = true);
+    union() {
+      translate([-POCKET_X - 0.45, POCKET_Y0 + 0.1, 0])
+        cube([
+          2 * POCKET_X + 0.9,
+          (POCKET_Y1 - POCKET_Y0) + 0.55,
+          COVER_T
+        ]);
+      mounting_bosses();
+    }
+    mounting_holes();
+    // Corner screws: clearance and a countersink so the head sits flush.
+    cover_screw_positions() {
+      translate([0, 0, -0.1])
+        cylinder(d = COVER_CLEAR_D, h = COVER_T + 0.3);
+      translate([0, 0, COVER_T - 1.35])
+        cylinder(d1 = COVER_CLEAR_D, d2 = 4.6, h = 1.5);
+    }
   }
 }
 
 module ghost_keyboard() {
-  pivot_y = -OEM_BASE_D / 2 + 6;
-  kb_z = OEM_FOOT_H + OEM_REAR_H / 2 + KB_DEPTH / 2 * cos(LEAN_ANGLE);
-  kb_y = pivot_y - KB_DEPTH / 2 * sin(LEAN_ANGLE) + 8;
+  color([0.75, 0.78, 0.82, 0.35])
+    translate([0, PIN_Y - KB_THICK / 2, SEAT_Z])
+      rotate([-LEAN, 0, 0])
+        translate([0, 0, KB_DEPTH / 2])
+          cube([KB_WIDTH, KB_THICK, KB_DEPTH], center = true);
+}
 
-  %translate([0, kb_y, kb_z])
-    rotate([-LEAN_ANGLE, 0, 0])
-      cube([KB_WIDTH, KB_THICKNESS, KB_DEPTH], center = true);
+module ghost_board() {
+  color([0.15, 0.45, 0.75, 0.55])
+    translate([-BOARD_W / 2, BOARD_REAR_Y, COVER_T + MOUNT_BOSS_H])
+      cube([BOARD_W, BOARD_L, BOARD_T]);
+  color([0.85, 0.85, 0.9, 0.8])
+    translate([0, BOARD_REAR_Y - USB_PROTRUDE, SEAT_USB_Z()])
+      cube([9, USB_PROTRUDE + 1.2, 3.2], center = true);
 }
 
 module assembly() {
-  color("DarkGoldenrod") part_side_left();
-  color("DarkGoldenrod") part_side_right();
-  color("DimGray") part_center();
+  color("#1c1c1c") cradle_solid();
   ghost_keyboard();
 }
 
-if (PART == "side_left") {
-  part_side_left();
-} else if (PART == "side_right") {
-  part_side_right();
-} else if (PART == "center") {
-  part_center();
-} else if (PART == "cradle") {
-  cradle_body();
-} else if (PART == "electronics_cover") {
-  electronics_cover();
-} else if (PART == "base" || PART == "back") {
-  cradle_body();
+module exploded() {
+  color("#1c1c1c") cradle_solid();
+  translate([0, 0, -14]) {
+    color("#2a2a2a") cover_plate();
+    ghost_board();
+  }
+  ghost_keyboard();
+}
+
+if (PART == "cradle") {
+  color("#1a1a1a") cradle_solid();
+} else if (PART == "cover") {
+  color("#242424") cover_plate();
+} else if (PART == "exploded") {
+  exploded();
 } else {
   assembly();
 }

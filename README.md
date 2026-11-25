@@ -1,63 +1,50 @@
-# Logitech diNovo Edge — 3D-printable USB-C charging cradle
+# Logitech diNovo Edge — 3D-printable charging cradle
 
-Open-source mechanical design for a replacement charging stand shaped like the **factory Logitech dock** (tall rear wall, short front lip, centre slot/fold), with **spring pogo pins**, **USB-C** access, and a **TP4056-class** bay (with documented power architecture).
+A one-piece stand shaped like the factory cradle, sized to the published envelope **135 × 87 × 85.5 mm** (width × depth × height). The keyboard leans in the slot between a tall rear fin and a shorter front fin. Two pogo pins land on the centre contact pad. A TP4056 board screws to the bottom cover, and its USB-C plug goes through a hole in the rear of the foot.
+
+![Side profile](docs/preview/side.png)
+
+![Front three-quarter view](docs/preview/front.png)
 
 ## What you get
 
 | Path | Purpose |
 |------|---------|
-| [`openscad/dinovo_cradle.scad`](openscad/dinovo_cradle.scad) | Parametric CAD — lip, pins, electronics bay |
-| [`stl/`](stl/) | Pre-exported STLs (split: `side_left`, `side_right`, `center`, or one-piece `cradle`) |
-| [`docs/ASSEMBLY.md`](docs/ASSEMBLY.md) | Glue/peg assembly for split prints |
-| [`docs/CALIBRATION.md`](docs/CALIBRATION.md) | How to measure contacts and tune OpenSCAD |
-| [`docs/ELECTRONICS.md`](docs/ELECTRONICS.md) | USB-C, TP4056 bay, **8 V boost** to pogo pins |
-| [`docs/PRINTING.md`](docs/PRINTING.md) | Slicer settings and build order |
-| [`bom.csv`](bom.csv) | Parts list |
-
-## Design overview
-
-The model is a **single sculpted monolith** (~158 mm wide): a **narrow slot** between the front lip and tall rear wall holds the keyboard’s 12 mm edge; the **centre fold** engages the underside cutout (~102 × 38 mm) with hook retention and pogo pins. The rear **foot overhang** matches the OEM base and hides the USB-C / TP4056 cavity underneath.
+| [`openscad/dinovo_cradle.scad`](openscad/dinovo_cradle.scad) | Parametric model |
+| [`stl/dinovo_cradle.stl`](stl/dinovo_cradle.stl) | The stand |
+| [`stl/dinovo_cradle_cover.stl`](stl/dinovo_cradle_cover.stl) | Bottom cover with the four TP4056 bosses |
+| [`docs/CALIBRATION.md`](docs/CALIBRATION.md) | Measure the contacts before the final print |
+| [`docs/ELECTRONICS.md`](docs/ELECTRONICS.md) | USB-C, the TP4056, and the factory 8 V dock |
+| [`docs/PRINTING.md`](docs/PRINTING.md) | Slicer notes |
+| [`docs/ASSEMBLY.md`](docs/ASSEMBLY.md) | Pins, board, cover |
+| [`bom.csv`](bom.csv) | Parts |
 
 ```mermaid
-flowchart TB
-  subgraph mech [Mechanical]
-    KB[diNovo Edge keyboard]
-    LIP[Printed lip in underside cutout]
-    PIN[Pogo pins on ramp face]
-    KB --> LIP
-    LIP --> PIN
-  end
-  subgraph elec [Electronics bay under base]
-    USB[USB-C TP4056 board slot]
-    BST[5V to 8V boost]
-    USB --> BST
-    BST --> PIN
-  end
+flowchart LR
+  USB["USB-C hole in the rear foot"] --> BOARD["TP4056 screwed to the cover"]
+  BOARD --> PINS["Two pogo pins on the centre pad"]
+  PINS --> KB["diNovo Edge"]
 ```
 
-**Important:** The factory dock supplies **8 V, 500 mA**, not 4.2 V. Reserve the TP4056 for USB-C breakout / 5 V distribution and use a small boost converter to the pogo pins (see [ELECTRONICS.md](docs/ELECTRONICS.md)).
+## Shape
+
+The factory stand is a glossy black plinth with two fins. This model follows that side profile: tall rear fin, shorter front fin, rounded crests, and a foot that runs the full depth. The centre pad is slightly narrower than the keyboard’s bottom cutout (about 102 mm), with a lip so the keyboard cannot slide forward. Overall size is the published stand size, so the 409 mm keyboard overhangs both sides the way it does on the original.
+
+## TP4056 and the USB-C hole
+
+The bottom cover has **four M2 mounting holes** on bosses. Defaults match a common **38 × 22 mm** USB-C TP4056 with four holes about **3 mm** in from each edge (32 × 16 mm pitch). The USB-C opening in the rear face is **13.5 × 7.4 mm**, in line with that board’s receptacle.
+
+Measure your own board before printing. Edit `BOARD_L`, `BOARD_W`, `HOLE_INSET_L`, and `HOLE_INSET_W` in the OpenSCAD file if the pitch differs. A smaller board with no holes will not pick up these screws; set the outline to that board or glue it in the bay.
+
+The factory dock feeds the keyboard **8 V, 500 mA**. A TP4056’s battery terminals are **4.2 V**. See [ELECTRONICS.md](docs/ELECTRONICS.md) before wiring the pins.
 
 ## Quick start
 
 ```bash
-# Regenerate STLs after editing parameters
 ./scripts/export-stl.sh
 ```
 
-1. Read [CALIBRATION.md](docs/CALIBRATION.md) and measure your keyboard.
-2. Edit `CONTACT_SPACING`, `CONTACT_HEIGHT`, and lip dimensions in `openscad/dinovo_cradle.scad`.
-3. Print `stl/dinovo_cradle_base.stl` and dry-fit before printing the back panel.
-4. Wire per [ELECTRONICS.md](docs/ELECTRONICS.md); verify **8 V** at pins before mating the keyboard.
-
-## OpenSCAD parts
-
-Pass `-D 'PART="..."'` when exporting:
-
-- `side_left` / `side_right` — outer side walls  
-- `center` — rear, front lip, fold, pogo pins, pegs  
-- `cradle` — one-piece monolith (all of the above)  
-- `electronics_cover` — underside bay lid  
-- `assembly` — full preview with ghost keyboard (default)
+OpenSCAD parts: `cradle`, `cover`, `assembly` (stand plus a ghost keyboard), `exploded`.
 
 ## License
 

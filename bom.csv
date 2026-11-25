@@ -1,9 +1,8 @@
-qty,ref,description,supplier_notes
-2,P1-P2,Spring pogo pin ~1.5mm tip 12-16mm stroke,P75-B1 or equivalent
-1,U1,USB-C TP4056 charging module,28mm board with protection
-1,U2,5V to 8V boost module,MT3608 or similar set to 8.0V
-1,,USB-C cable 5V 1A+,Phone charger OK
-1,,500mA hold polyfuse optional,Keyboard charge current
-4,,M3x10 screw + nut,Back panel to base
-1,,26AWG wire,red/black pairs
-4,,M2x6 screw optional,TP4056 mount
+qty,ref,description,notes
+2,P1-P2,Pogo pin 1.5 mm sleeve,Press into 1.8 mm holes
+1,U1,USB-C TP4056 module 38 x 22 mm,Four M2 holes inset 3 mm; measure yours
+4,,M2 x 6 mm screw,Board to cover bosses
+4,,M2 x 8 mm screw,Cover to foot
+1,U2,5 V to 8 V boost,Set to 8.0-8.2 V if matching the factory dock
+1,,USB-C 5 V supply,1 A or more
+,,26 AWG wire,Pogo tails to the bay
