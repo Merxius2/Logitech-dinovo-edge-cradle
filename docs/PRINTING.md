@@ -19,4 +19,4 @@ The stand fits a 150 mm bed. Print the cradle with the **foot on the bed** and t
 
 ## After printing
 
-Ream the two pogo holes with a 1.8 mm bit if the pins are tight. Clear the USB-C opening so a plug seats fully. The four boss holes are 1.75 mm for an M2 self-tapping screw; do not drill them out to clearance size.
+The pogo slots should accept a 1.5 mm sleeve. If a pin will not enter, open the slot with a needle file rather than drilling it round. Clear the USB-C opening so a plug seats fully. The four boss holes are 1.75 mm for an M2 self-tapping screw; do not drill them out to clearance size.

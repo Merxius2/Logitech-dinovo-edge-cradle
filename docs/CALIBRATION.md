@@ -12,6 +12,8 @@ Logitech does not publish the contact pitch. Measure your keyboard, then edit `o
 | `HOLE_INSET_L`, `HOLE_INSET_W` | Distance from each PCB edge to the mounting-hole centres. Default 3 mm. |
 | `USB_HOLE_W`, `USB_HOLE_H` | Rear opening. Default 13.5 × 7.4 mm. |
 | `USB_Z_ABOVE` | Receptacle centre above the bottom of the PCB. Default 3.4 mm. |
-| `PIN_HOLE_D` | Press fit for the pogo sleeve. Default 1.8 mm. |
+| `PIN_SLOT_W` | Slot width for a 1.5 mm sleeve. Default 2.05 mm. |
+| `PIN_SLOT_L` | Slot length, so the pin can slide onto the pad. Default 8 mm. |
+| `PIN_LEN` / `PIN_TIP` | Pin length and how far the tip stands above the pad. Defaults 16 mm and 2.6 mm. |
 
 Dry-fit the cradle with no power. The centre pad should enter the recess, the lip should stop the keyboard sliding out, and the pin holes should land on the pads. A felt marker on the pads leaves a witness mark if you need to shift `CONTACT_SPACING`.

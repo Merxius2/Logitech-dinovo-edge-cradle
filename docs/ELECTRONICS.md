@@ -1,10 +1,23 @@
 # Electronics
 
-## What the keyboard expects
+The cradle is powered by a **USB-C cable plugged into the TP4056**. You do not need the original Logitech adapter. The cable enters through the hole in the rear of the foot. Two pogo pins in the centre slots touch the keyboard.
 
-The original adapter is **8 V DC, 500 mA**. The two pads in the bottom-centre recess are the dock input. The charging circuit is inside the keyboard and is built for that dock voltage.
+```
+USB-C cable
+    │
+    ▼
+TP4056 board, screwed to the cover
+    │  OUT+ and OUT−  (or B+ and B− if that is all the board labels)
+    ▼
+wire in the bay
+    │
+    ▼
+pogo pin tails  →  keyboard contacts
+```
 
-A TP4056 charges one bare lithium cell and finishes at **4.2 V**. Those battery terminals are not a substitute for the 8 V dock. Do not tie `B+` / `B−` to the pogo pins unless you have already confirmed that your keyboard charges from that voltage.
+Solder the wires to the pin tails before you push the pins down the slots. One pin is positive, one is negative. Mark which slot is which.
+
+The original dock was **8 V**. A TP4056’s battery output is **4.2 V**. Wire it as above and try it. If the keyboard does not charge, take **5 V from the board’s input pads** (the USB side, not the battery side) to a small boost set to 8 V, and send that to the pins instead. The bay in front of the board has room for those wires.
 
 ## Board the cradle is drawn around
 
@@ -17,28 +30,17 @@ A TP4056 charges one bare lithium cell and finishes at **4.2 V**. Those battery 
 
 Change `BOARD_L`, `BOARD_W`, `HOLE_INSET_L`, `HOLE_INSET_W`, `USB_HOLE_W`, and `USB_HOLE_H` if your module differs, then re-export the STL.
 
-## Using the TP4056 with an 8 V dock input
+## Pogo pin slots
 
-A practical path that still uses the USB-C socket on the TP4056 board:
+Each slot is **8 mm long and 2.05 mm wide**, for a **1.5 mm × 16 mm** straight pogo pin. The pin drops in from the top of the centre pad. The bottom of the slot narrows to 1.35 mm, which the sleeve cannot pass, so the pin stops with about **2.6 mm** of tip above the pad. The tail and the wire hang in the bay under that step.
 
-```
-USB-C 5 V
-    │
-    ├─ TP4056 module, mounted on the cover (USB-C through the rear hole)
-    │     take 5 V from the board's input pads, not from B+
-    │
-    └─ small boost set to 8.0–8.2 V ── pogo + / pogo −
-```
-
-There is about 18 mm of free bay in front of the default board for wires. A boost module that does not fit there can sit beside the cradle; lengthen `POCKET_FRONT` if you want it inside.
-
-Check polarity on the keyboard pads before soldering. With the keyboard out, the open-circuit voltage at the pins should be about 8 V, and the pins should compress a millimetre or two when the keyboard is seated.
+Slide the pin along the slot until the tip meets the keyboard contact, then fix it with a drop of glue if it is loose. If your pins are a different length, change `PIN_LEN`. If the sleeve will not enter, the printed slot is a little tight: open `PIN_SLOT_W` by 0.15 mm.
 
 ## Parts
 
 | Qty | Part |
 |-----|------|
-| 2 | Pogo pin, 1.5 mm sleeve, solder tail |
+| 2 | Pogo pin, straight, 1.5 mm × 16 mm |
 | 1 | USB-C TP4056 module, 38 × 22 mm, four M2 holes |
 | 4 | M2 × 6 mm screw (board to cover) |
 | 4 | M2 × 8 mm screw (cover to foot) |

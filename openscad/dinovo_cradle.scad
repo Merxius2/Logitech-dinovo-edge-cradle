@@ -24,11 +24,19 @@ KB_THICK     = 12;     // official edge thickness; set 19.5 if you measure the t
 CUTOUT_W     = 101.6;  // bottom-centre recess, 4 in
 CUTOUT_CLEAR = 3.0;    // total width clearance of the centre pad in that recess
 
-/* --- Pogo pins (measure before the final print) --- */
-CONTACT_SPACING = 18.0;  // centre to centre, left-right
-PIN_HOLE_D      = 1.80;  // press fit for a 1.5 mm pogo sleeve
-PIN_PRESS_DEPTH = 8;
-PIN_RELIEF_D    = 3.6;   // wire / solder tail below the sleeve
+/* --- Pogo pins ---
+   Two slots on the centre pad. A straight 1.5 mm sleeve, 16 mm long
+   (the usual "pogo pin 1.5 x 16") drops in from the top. The slot is
+   longer than the sleeve so you can slide the pin sideways onto the
+   keyboard pad, then it stops on the narrow exit. Solder the tail in
+   the bay and run that wire to the TP4056. */
+CONTACT_SPACING = 18.0;   // nominal centre to centre, left-right
+PIN_OD          = 1.5;    // sleeve diameter
+PIN_LEN         = 16.0;   // overall pin length, plunger extended
+PIN_TIP         = 2.6;    // how far the extended pin stands above the pad
+PIN_SLOT_W      = 2.05;   // front-back, clearance around the 1.5 mm sleeve
+PIN_SLOT_L      = 8.0;    // left-right, room to slide the pin
+PIN_EXIT_W      = 1.35;   // narrower than the sleeve, wire still passes
 
 /* --- TP4056 USB-C module with four mounting holes ---
    Defaults match the common 38 x 22 mm protected module
@@ -194,12 +202,33 @@ module contact_pad() {
     cube([pad_w, 3.2, 4.4]);
 }
 
-module pin_holes() {
+function PIN_GRIP() = PIN_LEN - PIN_TIP;
+
+// Rounded slot, length along X, width along Y, extruded up from the origin.
+module pin_slot_prism(len, wid, h) {
+  span = max(len - wid, 0);
+  hull() {
+    translate([-span / 2, 0, 0]) cylinder(d = wid, h = h, $fn = 28);
+    translate([ span / 2, 0, 0]) cylinder(d = wid, h = h, $fn = 28);
+  }
+}
+
+// Towers under the pad so each slot is deep enough for a 16 mm pin.
+module pin_posts() {
+  for (x = [-CONTACT_SPACING / 2, CONTACT_SPACING / 2])
+    translate([x - PIN_SLOT_L / 2 - 1.4, PIN_Y - PIN_SLOT_W / 2 - 1.6, 8.6])
+      cube([PIN_SLOT_L + 2.8, PIN_SLOT_W + 3.2, SEAT_Z - 8.6]);
+}
+
+module pin_slots() {
+  grip = PIN_GRIP();
   for (x = [-CONTACT_SPACING / 2, CONTACT_SPACING / 2]) {
-    translate([x, PIN_Y, SEAT_Z - PIN_PRESS_DEPTH])
-      cylinder(d = PIN_HOLE_D, h = PIN_PRESS_DEPTH + 8);
-    translate([x, PIN_Y, COVER_T + 1])
-      cylinder(d = PIN_RELIEF_D, h = SEAT_Z - PIN_PRESS_DEPTH - COVER_T);
+    // Sleeve slot, open through the top of the pad.
+    translate([x, PIN_Y, SEAT_Z - grip])
+      pin_slot_prism(PIN_SLOT_L, PIN_SLOT_W, grip + 6);
+    // Tail exit into the bay. Narrower than the sleeve, so the pin stops.
+    translate([x, PIN_Y, 6.2])
+      pin_slot_prism(PIN_SLOT_L, PIN_EXIT_W, (SEAT_Z - grip) - 6.2 + 0.8);
   }
 }
 
@@ -221,8 +250,9 @@ module cradle_solid() {
         foot_dimples();
       }
       contact_pad();
+      pin_posts();
     }
-    pin_holes();
+    pin_slots();
     cover_screw_pilots();
   }
 }
@@ -249,6 +279,13 @@ module cover_plate() {
   }
 }
 
+module ghost_pins() {
+  for (x = [-CONTACT_SPACING / 2, CONTACT_SPACING / 2])
+    color([0.85, 0.65, 0.2])
+      translate([x, PIN_Y, SEAT_Z - PIN_GRIP()])
+        cylinder(d = PIN_OD, h = PIN_LEN, $fn = 24);
+}
+
 module ghost_keyboard() {
   color([0.75, 0.78, 0.82, 0.35])
     translate([0, PIN_Y - KB_THICK / 2, SEAT_Z])
@@ -268,6 +305,7 @@ module ghost_board() {
 
 module assembly() {
   color("#1c1c1c") cradle_solid();
+  ghost_pins();
   ghost_keyboard();
 }
 

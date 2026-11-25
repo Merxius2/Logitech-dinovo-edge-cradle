@@ -36,7 +36,9 @@ The bottom cover has **four M2 mounting holes** on bosses. Defaults match a comm
 
 Measure your own board before printing. Edit `BOARD_L`, `BOARD_W`, `HOLE_INSET_L`, and `HOLE_INSET_W` in the OpenSCAD file if the pitch differs. A smaller board with no holes will not pick up these screws; set the outline to that board or glue it in the bay.
 
-The factory dock feeds the keyboard **8 V, 500 mA**. A TP4056’s battery terminals are **4.2 V**. See [ELECTRONICS.md](docs/ELECTRONICS.md) before wiring the pins.
+The centre pad has **two slots** for a straight **1.5 × 16 mm** pogo pin. Each slot is 8 mm long, so the pin can slide onto the keyboard contact. The sleeve stops on a narrower exit, and the wire runs into the bay under the TP4056. Power is a USB-C cable into that board. See [ELECTRONICS.md](docs/ELECTRONICS.md).
+
+![Pogo pins in the centre slots](docs/preview/pins_fit.png)
 
 ## Quick start
 
