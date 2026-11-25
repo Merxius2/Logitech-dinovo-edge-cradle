@@ -103,47 +103,39 @@ module wire_channel(z0) {
     cube([5, 28, 22], center = true);
 }
 
-// Smooth OEM envelope (hull-sculpted monolith, not a flat plate + bolt-on back)
+// Side-profile extrusion — OEM M-silhouette (tall rear, low front lip, rear foot)
+// 2D polygon: x = depth (+Y front), y = height (+Z up)
+module oem_profile_2d() {
+  x_rear = -OEM_BASE_D / 2 - OEM_REAR_EXT;
+  x_front = OEM_BASE_D / 2 + 6;
+  x_slot_front = OEM_BASE_D / 2 - 16;
+  z0 = OEM_FOOT_H;
+
+  polygon(points = [
+    [x_rear, z0],
+    [x_front, z0],
+    [x_front - 4, z0 + OEM_FRONT_H + 6],
+    [x_slot_front, z0 + OEM_FRONT_H - 2],
+    [x_slot_front - 10, z0 + OEM_FRONT_H + 12],
+    [-OEM_BASE_D / 2 + 2, z0 + OEM_REAR_H],
+    [-OEM_BASE_D / 2 - OEM_REAR_EXT + 8, z0 + 5],
+    [x_rear + 5, z0]
+  ]);
+}
+
 module oem_outer_solid() {
-  rear_y = -OEM_BASE_D / 2 - OEM_REAR_EXT / 2;
-  front_y = OEM_BASE_D / 2 - 3;
-
-  union() {
-    hull() {
-      // Rear foot mass + overhang
-      translate([0, rear_y / 2, OEM_FOOT_H / 2])
-        rounded_prism([OEM_WIDTH, OEM_BASE_D + OEM_REAR_EXT, OEM_FOOT_H], OEM_FILLET);
-
-      // Tall rear crown
-      translate([0, -OEM_BASE_D / 2, OEM_FOOT_H + OEM_REAR_H - 6])
-        rounded_prism([OEM_WIDTH, 10, 14], 2.5);
-
-      // Front lip crown (lower than rear)
-      translate([0, front_y, OEM_FOOT_H + OEM_FRONT_H + 4])
-        rounded_prism([OEM_WIDTH - 8, 10, 10], 2);
-
-      // Side pillars (frame the slot opening)
-      for (sx = [-1, 1])
-        translate([sx * (OEM_WIDTH / 2 - 5), 4, OEM_FOOT_H + OEM_REAR_H * 0.62])
-          sphere(9, $fn = 32);
-    }
-
-    // Solid side cheeks below the open slot
-    for (sx = [-1, 1])
-      translate([sx * (OEM_WIDTH / 2 - OEM_SHELL_TH / 2), 2, OEM_FOOT_H + 32])
-        rounded_prism([OEM_SHELL_TH + 2, OEM_BASE_D - 6, 62], 2);
-
-    // Front prow face (angled OEM nose below logo area)
-    translate([0, OEM_BASE_D / 2 + 5, OEM_FOOT_H + OEM_FRONT_H * 0.5])
-      rotate([-LEAN_ANGLE - 4, 0, 0])
-        rounded_prism([OEM_WIDTH - 22, 6, OEM_FRONT_H + 10], 1.8);
+  minkowski() {
+    rotate([0, 90, 0])
+      linear_extrude(OEM_WIDTH - 2 * OEM_FILLET, center = true)
+        oem_profile_2d();
+    sphere(r = OEM_FILLET, $fn = 24);
   }
 }
 
 module keyboard_slot_cut() {
-  slot_y = KB_THICKNESS + 2 * SLOT_CLEAR_Y; // thin gap between front lip and rear wall
+  slot_y = KB_THICKNESS + 2 * SLOT_CLEAR_Y;
   slot_top = OEM_FOOT_H + OEM_REAR_H + 25;
-  pivot_y = -OEM_BASE_D / 2 + 6;
+  pivot_y = -OEM_BASE_D / 2 + 10;
 
   translate([0, pivot_y, OEM_FOOT_H + OEM_REAR_H / 2])
     rotate([-LEAN_ANGLE, 0, 0])
@@ -151,7 +143,7 @@ module keyboard_slot_cut() {
 }
 
 module cradle_body() {
-  fold_y = OEM_BASE_D / 2 - LIP_DEPTH / 2 - 6;
+  fold_y = OEM_BASE_D / 2 - LIP_DEPTH / 2 - 10;
   fold_z = OEM_FOOT_H;
 
   difference() {
