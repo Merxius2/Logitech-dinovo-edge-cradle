@@ -103,38 +103,40 @@ module wire_channel(z0) {
     cube([5, 28, 22], center = true);
 }
 
-// Outer skin: wide foot, tall rear slab, low front prow, solid cheeks
+// Smooth OEM envelope (hull-sculpted monolith, not a flat plate + bolt-on back)
 module oem_outer_solid() {
   rear_y = -OEM_BASE_D / 2 - OEM_REAR_EXT / 2;
-  front_y = OEM_BASE_D / 2 - 4;
+  front_y = OEM_BASE_D / 2 - 3;
 
   union() {
-    // Pedestal / rear overhang foot (OEM base extends behind stand)
-    translate([0, rear_y / 2, OEM_FOOT_H / 2])
-      rounded_prism([OEM_WIDTH, OEM_BASE_D + OEM_REAR_EXT, OEM_FOOT_H], OEM_FILLET);
+    hull() {
+      // Rear foot mass + overhang
+      translate([0, rear_y / 2, OEM_FOOT_H / 2])
+        rounded_prism([OEM_WIDTH, OEM_BASE_D + OEM_REAR_EXT, OEM_FOOT_H], OEM_FILLET);
 
-    // Tall rear wall
-    translate([0, -OEM_BASE_D / 2 - 2, OEM_FOOT_H + OEM_REAR_H / 2])
-      rounded_prism([OEM_WIDTH, OEM_WALL_TH + 2, OEM_REAR_H], OEM_FILLET / 1.5);
+      // Tall rear crown
+      translate([0, -OEM_BASE_D / 2, OEM_FOOT_H + OEM_REAR_H - 6])
+        rounded_prism([OEM_WIDTH, 10, 14], 2.5);
 
-    // Short front wall / lip
-    translate([0, front_y, OEM_FOOT_H + OEM_FRONT_H / 2])
-      rounded_prism([OEM_WIDTH, OEM_WALL_TH + 2, OEM_FRONT_H], OEM_FILLET / 1.5);
+      // Front lip crown (lower than rear)
+      translate([0, front_y, OEM_FOOT_H + OEM_FRONT_H + 4])
+        rounded_prism([OEM_WIDTH - 8, 10, 10], 2);
 
-    // Front prow (curved OEM nose — simplified as tilted cap)
-    translate([0, OEM_BASE_D / 2 + 3, OEM_FOOT_H + OEM_FRONT_H * 0.55])
-      rotate([-LEAN_ANGLE, 0, 0])
-        rounded_prism([OEM_WIDTH - 18, 7, OEM_FRONT_H + 6], 2);
+      // Side pillars (frame the slot opening)
+      for (sx = [-1, 1])
+        translate([sx * (OEM_WIDTH / 2 - 5), 4, OEM_FOOT_H + OEM_REAR_H * 0.62])
+          sphere(9, $fn = 32);
+    }
 
-    // Side cheeks (sculpted sides of the slot)
+    // Solid side cheeks below the open slot
     for (sx = [-1, 1])
-      translate([sx * (OEM_WIDTH / 2 - OEM_SHELL_TH / 2), 2, OEM_FOOT_H + (OEM_REAR_H + OEM_FRONT_H) / 4])
-        rounded_prism([OEM_SHELL_TH, OEM_BASE_D - 10, OEM_REAR_H * 0.72], 2);
+      translate([sx * (OEM_WIDTH / 2 - OEM_SHELL_TH / 2), 2, OEM_FOOT_H + 32])
+        rounded_prism([OEM_SHELL_TH + 2, OEM_BASE_D - 6, 62], 2);
 
-    // Top bridges left/right (open center slot for keyboard)
-    for (sx = [-1, 1])
-      translate([sx * (OEM_WIDTH / 2 - OEM_SHELL_TH * 1.1), 2, OEM_FOOT_H + OEM_REAR_H - 9])
-        rounded_prism([OEM_SHELL_TH + 2, OEM_BASE_D - 8, 18], 1.5);
+    // Front prow face (angled OEM nose below logo area)
+    translate([0, OEM_BASE_D / 2 + 5, OEM_FOOT_H + OEM_FRONT_H * 0.5])
+      rotate([-LEAN_ANGLE - 4, 0, 0])
+        rounded_prism([OEM_WIDTH - 22, 6, OEM_FRONT_H + 10], 1.8);
   }
 }
 
