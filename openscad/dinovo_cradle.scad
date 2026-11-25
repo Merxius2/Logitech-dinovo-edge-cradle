@@ -287,9 +287,10 @@ module ghost_pins() {
 }
 
 module ghost_keyboard() {
-  color([0.75, 0.78, 0.82, 0.35])
-    translate([0, PIN_Y - KB_THICK / 2, SEAT_Z])
-      rotate([-LEAN, 0, 0])
+  // Bottom on the centre pad, leaning back onto the tall fin.
+  color([0.62, 0.64, 0.67, 0.82])
+    translate([0, 0, SEAT_Z])
+      rotate([LEAN, 0, 0])
         translate([0, 0, KB_DEPTH / 2])
           cube([KB_WIDTH, KB_THICK, KB_DEPTH], center = true);
 }
@@ -305,8 +306,15 @@ module ghost_board() {
 
 module assembly() {
   color("#1c1c1c") cradle_solid();
+  color("#242424") cover_plate();
+  ghost_board();
   ghost_pins();
   ghost_keyboard();
+  // USB-C lead leaving the rear of the foot.
+  color("#141414")
+    translate([0, Y_REAR - 16, SEAT_USB_Z()])
+      rotate([90, 0, 0])
+        cylinder(d = 3.4, h = 28, $fn = 24);
 }
 
 module exploded() {

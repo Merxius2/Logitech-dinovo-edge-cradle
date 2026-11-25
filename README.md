@@ -2,9 +2,11 @@
 
 A one-piece stand shaped like the factory cradle, sized to the published envelope **135 × 87 × 85.5 mm** (width × depth × height). The keyboard leans in the slot between a tall rear fin and a shorter front fin. Two pogo pins land on the centre contact pad. A TP4056 board screws to the bottom cover, and its USB-C plug goes through a hole in the rear of the foot.
 
-![Side profile](docs/preview/side.png)
+![Assembled cradle, keyboard seated](docs/preview/assembly_front3q.png)
 
-![Front three-quarter view](docs/preview/front.png)
+![Side, with the USB-C lead](docs/preview/assembly_side.png)
+
+![Side profile](docs/preview/side.png)
 
 ## What you get
 
