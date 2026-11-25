@@ -1,42 +1,42 @@
 # 3D printing notes
 
-## Parts
+## What to print
 
-| STL | Role | Approx. size (mm) |
-|-----|------|-------------------|
-| `dinovo_cradle_cradle.stl` | **OEM-style monolith** — tall rear, front lip, slot, fold, pins | 158 × 102 × 145 |
-| `dinovo_cradle_electronics_cover.stl` | Underside bay cover (rear foot) | 38 × 30 × 10 |
+### Split build (recommended on tight beds)
 
-`dinovo_cradle_base.stl` / `dinovo_cradle_back.stl` are copies of the monolith for old slicer presets.
+| # | STL | Qty | Max bbox (mm) | Bed note |
+|---|-----|-----|---------------|----------|
+| 1 | `dinovo_cradle_side_left.stl` | 1 | ~22 × 102 × 145 | Small — any bed |
+| 2 | `dinovo_cradle_side_right.stl` | 1 | ~22 × 102 × 145 | Mirror of left |
+| 3 | `dinovo_cradle_center.stl` | 1 | ~118 × 102 × 145 | Fits 220 × 220 |
+| 4 | `dinovo_cradle_electronics_cover.stl` | 1 | ~38 × 30 × 6 | Optional |
 
-Lay the **cradle on its back** (rear wall on the bed) or **feet-down** if your slicer handles the rear overhang; add supports inside the keyboard slot on first print.
+Assembly: [ASSEMBLY.md](ASSEMBLY.md).
+
+### One-piece build
+
+| STL | Qty |
+|-----|-----|
+| `dinovo_cradle_cradle.stl` | 1 (full monolith) |
+
+`dinovo_cradle_base.stl` / `dinovo_cradle_back.stl` duplicate `cradle.stl` — do not print extras.
+
+## Orientation
+
+| Part | On bed |
+|------|--------|
+| **Sides** | Largest flat face down (inner seam facing up) |
+| **Center** | **Rear wall down** or foot down; supports in slot if needed |
+| **Cover** | Flat |
 
 ## Settings (starting point)
 
-- Material: PETG or ABS (less brittle than PLA for lip tabs; PLA OK for prototypes)
-- Layer height: 0.2 mm
-- Perimeters: 4
-- Infill: 25–35 % gyroid on base; 15 % on back
-- Brim: 5 mm on base (large footprint, corners can lift)
-- Orientation: as exported (base flat on bed, back with largest face down)
+- Material: PETG or ABS on center/sides; PLA OK for prototypes
+- Layer height: 0.2 mm, 4 perimeters, 25–35 % gyroid
+- Brim on **center** (and on full cradle)
 
 ## Post-processing
 
-1. Clear support from USB slot and electronics cavity if any.
-2. Run a **1.75 mm drill** by hand through pogo pin holes if needed.
-3. Counter-sink M3 holes in back panel foot by hand if using screws.
-
-## What to print (unique parts: **2**)
-
-| # | File | Qty | Notes |
-|---|------|-----|--------|
-| 1 | `stl/dinovo_cradle_cradle.stl` | **1×** | Full stand — only mandatory print |
-| 2 | `stl/dinovo_cradle_electronics_cover.stl` | **1×** | Optional lid over TP4056 bay under rear foot |
-
-Do **not** print `dinovo_cradle_base.stl` and `dinovo_cradle_back.stl` **in addition** to `cradle.stl` — they are identical copies of the monolith for older filenames.
-
-## Suggested print order
-
-1. Print **cradle** → dry-fit keyboard ([CALIBRATION.md](CALIBRATION.md)).
-2. Install pogo pins + electronics; verify fit.
-3. Print **electronics_cover** if the bay needs a lid.
+1. Ream pogo pin holes with 1.75 mm drill if needed.
+2. Lightly sand peg faces on center if sides are hard to press on.
+3. Clear USB slot burrs after printing center/cradle.

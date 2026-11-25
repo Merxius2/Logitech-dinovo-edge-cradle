@@ -7,7 +7,8 @@ Open-source mechanical design for a replacement charging stand shaped like the *
 | Path | Purpose |
 |------|---------|
 | [`openscad/dinovo_cradle.scad`](openscad/dinovo_cradle.scad) | Parametric CAD — lip, pins, electronics bay |
-| [`stl/`](stl/) | Pre-exported STLs (`base`, `back`, `electronics_cover`) |
+| [`stl/`](stl/) | Pre-exported STLs (split: `side_left`, `side_right`, `center`, or one-piece `cradle`) |
+| [`docs/ASSEMBLY.md`](docs/ASSEMBLY.md) | Glue/peg assembly for split prints |
 | [`docs/CALIBRATION.md`](docs/CALIBRATION.md) | How to measure contacts and tune OpenSCAD |
 | [`docs/ELECTRONICS.md`](docs/ELECTRONICS.md) | USB-C, TP4056 bay, **8 V boost** to pogo pins |
 | [`docs/PRINTING.md`](docs/PRINTING.md) | Slicer settings and build order |
@@ -52,9 +53,10 @@ flowchart TB
 
 Pass `-D 'PART="..."'` when exporting:
 
-- `cradle` — full OEM-style body (pins + slot + electronics)  
+- `side_left` / `side_right` — outer side walls  
+- `center` — rear, front lip, fold, pogo pins, pegs  
+- `cradle` — one-piece monolith (all of the above)  
 - `electronics_cover` — underside bay lid  
-- `base` / `back` — alias `cradle` (legacy)  
 - `assembly` — full preview with ghost keyboard (default)
 
 ## License
