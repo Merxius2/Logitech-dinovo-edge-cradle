@@ -15,7 +15,7 @@ Open-source mechanical design for a replacement charging stand with **spring pog
 
 ## Design overview
 
-The OEM stand is only about **6 in / 158 mm** wide; the keyboard rests on a **bottom-center cutout** (~102 × 38 mm) while leaning on a clear back rest. This replica follows that layout so it prints on typical beds without splitting the full **409 mm** keyboard width.
+The OEM stand is only about **6 in / 158 mm** wide; the keyboard rests on a **bottom-center cutout** (~102 × 38 mm) while leaning on a clear back rest. **Weight must hang on the cutout lip + front hook**, not on friction against the back — the tab fills ~37 mm of the recess so it does not slide along the lean. This replica follows that layout so it prints on typical beds without splitting the full **409 mm** keyboard width.
 
 ```mermaid
 flowchart TB

@@ -22,10 +22,14 @@ BACK_H           = 188;   // back rest height
 BACK_TH          = 6;
 LEAN_ANGLE       = 12;    // degrees from vertical (keyboard leans slightly back)
 
-/* --- Bottom lip engaging CUTOUT --- */
-LIP_WIDTH        = CUTOUT_W + 1.2;  // slight clearance
-LIP_DEPTH        = 14;              // protrusion into cutout
+/* --- Bottom lip engaging CUTOUT (anti-slide: hook + fill recess depth) --- */
+LIP_WIDTH_CLEAR  = 0.5;             // per side; tighten if fit is loose
+LIP_DEPTH_CLEAR  = 0.8;             // end clearance into 38 mm cutout
+LIP_WIDTH        = CUTOUT_W - LIP_WIDTH_CLEAR;
+LIP_DEPTH        = CUTOUT_D - LIP_DEPTH_CLEAR; // ~37 mm tab; was 14 mm → slid easily
 LIP_STEP_H       = 10;              // vertical face where contacts live (tune)
+HOOK_H           = 3.2;             // front bar under cutout lip (primary retention)
+HOOK_INSET       = 1.0;             // set 0 to print without hook (calibration only)
 
 /* --- Pogo pins (P75-B1 / similar 1.5–1.7 mm barrel, ~2 mm nose) --- */
 PIN_COUNT        = 2;
@@ -98,9 +102,19 @@ module lip_and_pins() {
     translate([0, 0, BASE_FOOT_H])
       cube([STAND_WIDTH, BASE_DEPTH, ELECTRONICS_H], center = true);
 
-    // Lip tab (engages keyboard underside cutout)
+    // Lip tab (fills underside cutout depth — stops sliding along the dock)
     translate([0, lip_y, BASE_FOOT_H + ELECTRONICS_H])
       rounded_cube([LIP_WIDTH, LIP_DEPTH, LIP_STEP_H], 1.5);
+
+    // Front hook: catches the forward edge of the cutout (weight hangs here, not on friction)
+    if (HOOK_INSET > 0)
+      translate([0, lip_y - LIP_DEPTH / 2 + HOOK_INSET, BASE_FOOT_H + ELECTRONICS_H + LIP_STEP_H])
+        rounded_cube([LIP_WIDTH - 2, LIP_WIDTH * 0.22, HOOK_H], 0.8);
+
+    // Side fences at cutout — keep keyboard centered on the narrow stand
+    for (sx = [-1, 1])
+      translate([sx * (LIP_WIDTH / 2 - 2), lip_y, BASE_FOOT_H + ELECTRONICS_H])
+        cube([4, LIP_DEPTH * 0.85, LIP_STEP_H + HOOK_H + 2], center = true);
 
     // Ramp transition behind lip (keyboard bottom rear bears here)
     translate([0, lip_y - LIP_DEPTH/2 - 8, BASE_FOOT_H + ELECTRONICS_H + LIP_STEP_H/2])
